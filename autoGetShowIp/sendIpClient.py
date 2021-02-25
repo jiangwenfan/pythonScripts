@@ -6,7 +6,13 @@ import smtplib
 from email.header import Header
 from email.mime.text import MIMEText
 import socket 
+import time
 
+#-----------------发送到自己的服务器------------
+ip = "sick.pwall.icu"
+port = 5656
+
+#-------------------发送到email--------------------
 mail_host = "smtp.126.com"      
 mail_user = "zhan2103208467@126.com"                  # 用户名
 mail_pass = "beida660xiaofan"               # 授权密码
@@ -17,12 +23,22 @@ receivers = ['technology198964@gmail.com']
  
 def getIp():
     hostname = socket.gethostname()
-    # 获取本机ip
     ip = socket.gethostbyname(hostname)
-    return ip
+    if ip == "127.0.0.1":
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(('8.8.8.8', 80))
+            ip = s.getsockname()[0]
+        finally:
+            s.close()
+        info = "hostname: " + hostname +"<===========>ip: "+ip
+        return info
+    else:
+        info = "hostname: " + hostname +"<===========>ip: "+ip
+        return info
 
-content = 'ip: '+str(getIp())
-title = 'virtual machine is started!'  
+content = getIp() #email content
+title = 'virtual machine is started!'  #email title
 
 def sendEmail():
  
@@ -51,8 +67,31 @@ def send_email2(SMTP_host, from_account, from_passwd, to_account, subject, conte
  
     email_client.quit()
 
+def sendToServer(ip,port,info):
+    """
+        设置自己服务器的ip和端口。
+    """
+    tcpSocket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+
+    serverIp = ip
+    serverPort = port
+    serverAddr = (serverIp,serverPort)
+    tcpSocket.connect(serverAddr)
+    
+    send_data = info
+    tcpSocket.send(send_data.encode("utf-8"))
+    
+    tcpSocket.close()
+    print("send is ok!")
+
  
 if __name__ == '__main__':
-    sendEmail()
+    #sendEmail() #发送到邮箱
+    #currentTime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
+    currentTime = time.strftime("%H:%M:%S",time.localtime())
+    info = currentTime+" <=========> "+getIp()
+    sendToServer(ip,port,info) #发送到Server
+
+
     # receiver = '***'
     # send_email2(mail_host, mail_user, mail_pass, receiver, title, content)
