@@ -1,0 +1,3 @@
+member,成员
+sole,唯一
+surviving,幸存 
