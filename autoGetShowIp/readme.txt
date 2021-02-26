@@ -13,7 +13,15 @@
     pyinstal -F sendIpClient.py #打包成可执行脚本
 
     windows设置开机启动:
+        通过使用sc命令创建开机启动服务来实现.
+        eg:
+            sc create "test1" binpath= "C:\sendIpClient.exe" displayname= "first" start= auto 
         
+        [可选项]如果要和同步时间的工具一起使用, 建议将服务创建到MS Transactions组，当然使用默认也行.
+        即,不创建到MS Transactions组中,可以配合时间同步工具正常使用.
+        eg:
+            sc create "test000" binpath= "C:\sendIpClient.exe" displayname= "test0000ip" group= "MS Transactions"  start= auto
+
     centos设置开机启动：
         在/etc/rc.d/rc.local中添加启动命令,例如: ./opt/sendIpClient
 

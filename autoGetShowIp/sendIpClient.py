@@ -83,6 +83,7 @@ def sendToServer(ip,port,info):
     
     tcpSocket.close()
     print("send is ok!")
+    time.sleep(2)
 
  
 if __name__ == '__main__':
